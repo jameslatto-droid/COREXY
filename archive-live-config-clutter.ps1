@@ -102,6 +102,10 @@ else
 fi
 '@
 
+# Windows Git checkouts commonly use CRLF. Bash on the Pi requires LF-only
+# input here; otherwise tokens such as 'pipefail' arrive as 'pipefail\r'.
+$bash = $bash.Replace("`r", "")
+
 Write-Host "Auditing live config root on $Remote..."
 $bash | ssh $Remote bash -s -- $ConfigDir $archiveDir $mode
 if ($LASTEXITCODE -ne 0) {
