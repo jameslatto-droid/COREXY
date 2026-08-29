@@ -1,71 +1,139 @@
 /* BEGIN COREXY MOBILE PENDANT */
 /*
- * COREXY control surface — visual pass v2
- *
- * Stock Mainsail/Vuetify remains underneath. This file changes presentation
- * only: no controls, G-code, movement behaviour, limits or safety logic.
+ * COREXY control surface — visual pass v3
+ * Stock Mainsail/Vuetify remains underneath. Presentation only.
  */
 
 :root {
-  --corexy-panel-radius: 14px;
-  --corexy-control-radius: 10px;
+  --corexy-accent: #6ea8ff;
+  --corexy-accent-soft: rgba(110, 168, 255, 0.14);
+  --corexy-bg: #0f1318;
+  --corexy-shell: #12171d;
+  --corexy-panel: #171d24;
+  --corexy-panel-top: #1c232b;
+  --corexy-control: #222a33;
+  --corexy-control-hover: #2a3440;
+  --corexy-text: #edf3f8;
+  --corexy-muted: #8f9cab;
   --corexy-border: rgba(255, 255, 255, 0.075);
   --corexy-border-strong: rgba(255, 255, 255, 0.14);
-  --corexy-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
-  --corexy-shadow-soft: 0 5px 16px rgba(0, 0, 0, 0.12);
+  --corexy-panel-radius: 14px;
+  --corexy-control-radius: 10px;
+  --corexy-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+  --corexy-shadow-soft: 0 4px 14px rgba(0, 0, 0, 0.18);
   --corexy-transition: 140ms ease;
 }
-
-.theme--light {
-  --corexy-border: rgba(20, 28, 40, 0.10);
-  --corexy-border-strong: rgba(20, 28, 40, 0.18);
-  --corexy-shadow: 0 12px 30px rgba(20, 28, 40, 0.10);
-  --corexy-shadow-soft: 0 5px 16px rgba(20, 28, 40, 0.08);
-}
-
-/* ---------- Shared desktop + mobile language ---------- */
 
 .v-application {
   font-variant-numeric: tabular-nums;
 }
 
-.v-card.panel {
+/* ---------- Dark control-room shell ---------- */
+
+.theme--dark.v-application,
+.theme--dark.v-main,
+.theme--dark .v-main__wrap {
+  background: var(--corexy-bg) !important;
+}
+
+.theme--dark.v-navigation-drawer {
+  background: var(--corexy-shell) !important;
+  border-right: 1px solid var(--corexy-border) !important;
+}
+
+.theme--dark.v-app-bar,
+.theme--dark.v-app-bar.primary,
+.theme--dark .v-app-bar.primary {
+  background: var(--corexy-shell) !important;
+  color: var(--corexy-text) !important;
+  border-bottom: 1px solid var(--corexy-border) !important;
+  box-shadow: var(--corexy-shadow-soft) !important;
+}
+
+/* Remove the large legacy red brand block where Mainsail uses primary. */
+.theme--dark.v-navigation-drawer .primary,
+.theme--dark .v-navigation-drawer .primary {
+  background: var(--corexy-shell) !important;
+  color: var(--corexy-text) !important;
+}
+
+.v-navigation-drawer .v-list-item {
+  width: calc(100% - 16px);
+  min-height: 42px;
+  margin: 3px 8px;
+  border-radius: var(--corexy-control-radius) !important;
+  color: var(--corexy-muted) !important;
+  transition: background var(--corexy-transition), color var(--corexy-transition);
+}
+
+.v-navigation-drawer .v-list-item .v-icon {
+  color: currentColor !important;
+  opacity: 0.88;
+}
+
+.v-navigation-drawer .v-list-item:hover {
+  background: rgba(255, 255, 255, 0.045) !important;
+  color: var(--corexy-text) !important;
+}
+
+.v-navigation-drawer .v-list-item--active {
+  background: var(--corexy-accent-soft) !important;
+  color: var(--corexy-accent) !important;
+}
+
+.v-navigation-drawer .v-list-item--active::before {
+  opacity: 0 !important;
+}
+
+/* ---------- Panels ---------- */
+
+.theme--dark.v-card.panel,
+.theme--dark .v-card.panel {
   overflow: hidden;
+  background: var(--corexy-panel) !important;
+  color: var(--corexy-text) !important;
   border: 1px solid var(--corexy-border) !important;
   border-radius: var(--corexy-panel-radius) !important;
   box-shadow: var(--corexy-shadow) !important;
-  transition:
-    border-color var(--corexy-transition),
-    box-shadow var(--corexy-transition);
 }
 
-.v-card.panel .panel-toolbar {
+.theme--dark .v-card.panel .panel-toolbar,
+.theme--dark.v-card.panel .panel-toolbar {
+  background: var(--corexy-panel-top) !important;
+  color: var(--corexy-text) !important;
   border-bottom: 1px solid var(--corexy-border) !important;
+  box-shadow: none !important;
 }
 
 .v-card.panel .panel-toolbar .subheading {
-  font-size: 0.96rem;
-  font-weight: 600;
+  font-size: 0.94rem;
+  font-weight: 650;
   letter-spacing: 0.01em;
 }
 
 .v-card.panel .panel-toolbar .v-icon {
-  opacity: 0.82;
+  opacity: 0.72;
 }
 
 .v-divider {
   border-color: var(--corexy-border) !important;
 }
 
+.theme--dark .v-data-table,
+.theme--dark .v-data-table__wrapper,
+.theme--dark .v-simple-table,
+.theme--dark .v-simple-table table {
+  background: transparent !important;
+}
+
+/* ---------- Buttons and inputs ---------- */
+
 .v-application .v-btn {
   font-weight: 600;
-  letter-spacing: 0.015em !important;
+  letter-spacing: 0.01em !important;
   text-transform: none !important;
   box-shadow: none !important;
-  transition:
-    transform var(--corexy-transition),
-    background-color var(--corexy-transition),
-    opacity var(--corexy-transition);
+  transition: transform var(--corexy-transition), background var(--corexy-transition), border-color var(--corexy-transition);
 }
 
 .v-application .v-btn:not(.v-btn--icon) {
@@ -76,6 +144,16 @@
   border-radius: var(--corexy-control-radius) !important;
 }
 
+.theme--dark .v-btn:not(.primary):not(.error):not(.red):not(.warning):not(.success):not(.v-btn--icon) {
+  background: var(--corexy-control) !important;
+  border: 1px solid var(--corexy-border) !important;
+}
+
+.theme--dark .v-btn:not(.primary):not(.error):not(.red):not(.warning):not(.success):not(.v-btn--icon):hover {
+  background: var(--corexy-control-hover) !important;
+  border-color: var(--corexy-border-strong) !important;
+}
+
 .v-application .v-btn:active:not(.v-btn--disabled) {
   transform: scale(0.98);
 }
@@ -84,37 +162,27 @@
   border-radius: var(--corexy-control-radius) !important;
 }
 
+.theme--dark .v-text-field--outlined > .v-input__control > .v-input__slot {
+  background: rgba(7, 10, 13, 0.28) !important;
+}
+
 .v-text-field--outlined fieldset {
   border-color: var(--corexy-border-strong) !important;
 }
 
 .v-text-field--outlined.v-input--is-focused fieldset {
+  border-color: var(--corexy-accent) !important;
   border-width: 1px !important;
 }
 
-/* Cleaner application chrome without replacing the active Mainsail theme. */
-.v-app-bar {
-  border-bottom: 1px solid var(--corexy-border) !important;
-  box-shadow: var(--corexy-shadow-soft) !important;
-}
+/* ---------- Temperature instrumentation ---------- */
 
-.v-navigation-drawer .v-list-item {
-  width: calc(100% - 16px);
-  margin: 2px 8px;
-  border-radius: var(--corexy-control-radius);
-}
-
-.v-navigation-drawer .v-list-item::before {
-  border-radius: var(--corexy-control-radius);
-}
-
-/* Temperatures read more like instrumentation than a spreadsheet. */
 .temperature-panel-table thead th {
-  font-size: 0.70rem !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.055em;
+  font-size: 0.68rem !important;
+  font-weight: 650 !important;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  opacity: 0.60;
+  color: var(--corexy-muted) !important;
 }
 
 .temperature-panel-table tbody td.name {
@@ -122,8 +190,9 @@
 }
 
 .temperature-panel-table tbody td.current {
-  font-size: 1.02rem;
+  font-size: 1.04rem;
   font-weight: 700;
+  color: var(--corexy-text) !important;
   font-variant-numeric: tabular-nums;
 }
 
@@ -131,13 +200,14 @@
   border-bottom-color: var(--corexy-border) !important;
 }
 
-/* Calibration is intentionally presented as one coherent control group. */
+/* ---------- Probe & Level ---------- */
+
 .macrogroup_6fefb78c-4cf4-4e77-9b37-17d2cd58a2fb_panel .v-card__text {
   padding: 12px 14px !important;
 }
 
 .macrogroup_6fefb78c-4cf4-4e77-9b37-17d2cd58a2fb_panel .v-btn {
-  min-height: 40px;
+  min-height: 42px;
 }
 
 /* ---------- Desktop ---------- */
@@ -147,14 +217,20 @@
     border-color: var(--corexy-border-strong) !important;
   }
 
+  .v-card.panel .panel-toolbar,
+  .v-card.panel .panel-toolbar .v-toolbar__content {
+    min-height: 46px !important;
+    height: 46px !important;
+  }
+
   .toolhead-control-panel .v-btn,
   .extruder-control-panel .v-btn {
-    min-height: 38px;
+    min-height: 40px;
   }
 
   .temperature-panel-table tbody td {
-    padding-top: 8px !important;
-    padding-bottom: 8px !important;
+    padding-top: 9px !important;
+    padding-bottom: 9px !important;
   }
 }
 
@@ -164,6 +240,10 @@
   :root {
     --corexy-panel-radius: 12px;
     --corexy-control-radius: 12px;
+  }
+
+  .v-app-bar {
+    box-shadow: none !important;
   }
 
   .v-card.panel {
@@ -182,7 +262,7 @@
   }
 
   .v-card.panel .panel-toolbar .subheading {
-    font-size: 0.94rem;
+    font-size: 0.93rem;
   }
 
   .toolhead-control-panel .v-container,
@@ -203,7 +283,7 @@
   .macrogroup_6fefb78c-4cf4-4e77-9b37-17d2cd58a2fb_panel .v-btn {
     min-width: 50px;
     min-height: 50px;
-    font-size: 0.98rem;
+    font-size: 0.97rem;
   }
 
   .toolhead-control-panel input,
@@ -219,23 +299,21 @@
     font-size: 16px;
   }
 
-  /* Drop low-value column labels; the heater rows carry the hierarchy. */
   .temperature-panel .temperature-panel-table thead {
     display: none;
   }
 
   .temperature-panel .temperature-panel-table tbody td {
-    padding-top: 10px !important;
-    padding-bottom: 10px !important;
+    padding-top: 11px !important;
+    padding-bottom: 11px !important;
   }
 
   .temperature-panel .temperature-panel-table tbody td.name {
-    font-size: 0.94rem;
+    font-size: 0.93rem;
   }
 
   .temperature-panel .temperature-panel-table tbody td.current {
-    font-size: 1.12rem;
-    font-weight: 700;
+    font-size: 1.14rem;
     white-space: nowrap;
   }
 
@@ -243,7 +321,6 @@
     padding-left: 8px !important;
   }
 
-  /* Two-column, thumb-friendly Probe & Level action grid. */
   .macrogroup_6fefb78c-4cf4-4e77-9b37-17d2cd58a2fb_panel .v-card__text {
     padding: 8px !important;
   }
@@ -266,7 +343,7 @@
 
   .macrogroup_6fefb78c-4cf4-4e77-9b37-17d2cd58a2fb_panel .v-btn {
     width: 100%;
-    min-height: 54px;
+    min-height: 56px;
     padding: 7px 10px !important;
     font-size: 0.82rem;
     line-height: 1.15;
