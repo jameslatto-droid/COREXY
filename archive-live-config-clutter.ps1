@@ -68,7 +68,7 @@ if [ "$mode" = "apply" ]; then
   echo
 fi
 
-while IFS= read -r -d '' path; do
+find "$config_dir" -mindepth 1 -maxdepth 1 -print0 | sort -z | while IFS= read -r -d '' path; do
   name="$(basename "$path")"
   if keep_name "$name"; then
     printf 'KEEP     %s\n' "$name"
@@ -85,7 +85,7 @@ while IFS= read -r -d '' path; do
       printf 'WOULD ARCHIVE  %s\n' "$name"
     fi
   fi
-done < <(find "$config_dir" -mindepth 1 -maxdepth 1 -print0 | sort -z)
+done
 
 if [ "$mode" = "apply" ]; then
   echo
@@ -102,12 +102,29 @@ else
 fi
 '@
 
-# Windows Git checkouts commonly use CRLF. Bash on the Pi requires LF-only
-# input here; otherwise tokens such as 'pipefail' arrive as 'pipefail\r'.
-$bash = $bash.Replace("`r", "")
+# Materialize the Bash payload as an LF-only, UTF-8-without-BOM temp file.
+# Copying a real script avoids CRLF/stdin-pipeline parsing differences between
+# PowerShell on Windows and Bash on the Raspberry Pi.
+$bash = $bash.Replace("`r`n", "`n").Replace("`r", "")
+$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+$localScript = Join-Path ([System.IO.Path]::GetTempPath()) ("corexy-config-archive-{0}.sh" -f [guid]::NewGuid().ToString("N"))
+$remoteScript = "/tmp/corexy-config-archive.sh"
 
-Write-Host "Auditing live config root on $Remote..."
-$bash | ssh $Remote bash -s -- $ConfigDir $archiveDir $mode
-if ($LASTEXITCODE -ne 0) {
-    throw "Remote archive audit failed with exit code $LASTEXITCODE"
+try {
+    [System.IO.File]::WriteAllText($localScript, $bash + "`n", $utf8NoBom)
+
+    Write-Host "Uploading temporary archive audit script to $Remote..."
+    scp $localScript "$Remote`:$remoteScript"
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to upload remote archive audit script (scp exit $LASTEXITCODE)"
+    }
+
+    Write-Host "Auditing live config root on $Remote..."
+    ssh $Remote "bash $remoteScript '$ConfigDir' '$archiveDir' '$mode'; rc=`$?; rm -f '$remoteScript'; exit `$rc"
+    if ($LASTEXITCODE -ne 0) {
+        throw "Remote archive audit failed with exit code $LASTEXITCODE"
+    }
+}
+finally {
+    Remove-Item -LiteralPath $localScript -Force -ErrorAction SilentlyContinue
 }
