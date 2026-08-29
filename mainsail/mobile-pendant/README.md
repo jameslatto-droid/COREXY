@@ -1,6 +1,6 @@
 # Mainsail Mobile Pendant
 
-A phone-focused Mainsail dashboard for the COREXY printer.
+A phone-focused Mainsail dashboard for the COREXY printer, with a shared modern visual treatment for both mobile and desktop Mainsail.
 
 The implementation deliberately uses Mainsail and Moonraker's existing configuration mechanisms rather than forking Mainsail or creating a second printer-control web app.
 
@@ -14,6 +14,36 @@ The mobile dashboard is reduced to:
 4. **Probe & Level** — a dedicated mobile-only macro group populated from the Klipper objects actually loaded on the printer.
 
 The normal generic **Macros** panel is hidden on the phone. Desktop and tablet dashboard layouts are not modified.
+
+## Visual treatment
+
+`custom.css` is a presentation-only layer over stock Mainsail/Vuetify. It is intentionally conservative about application structure so Mainsail remains upgradeable.
+
+The shared desktop/mobile treatment includes:
+
+- softer panel corners, subtle borders and reduced heavy shadows;
+- sentence-case buttons instead of visually noisy all-caps controls;
+- cleaner text-field and button geometry;
+- restrained application-bar and navigation styling;
+- clearer panel headings;
+- tabular numeric rendering for temperatures and machine values;
+- a cleaner temperature table with stronger emphasis on current temperature.
+
+The phone view additionally gets larger touch targets, tighter card spacing, simplified heater rows and a two-column **Probe & Level** action grid.
+
+The theme does not alter G-code, movement behaviour, limits, homing, heater logic or printer safety behaviour.
+
+### Apply visual changes only
+
+Once the pendant itself is installed, visual iterations can be applied without touching Klipper configuration:
+
+```powershell
+py .\mainsail\mobile-pendant\apply_theme.py
+```
+
+`apply_theme.py` backs up the live `.theme/custom.css`, replaces only the marked COREXY theme block, and uploads the result through Moonraker. It performs no Mainsail database writes and no printer-control calls.
+
+A **hard browser refresh is required** after applying the theme. A `FIRMWARE_RESTART` is not required for a CSS-only update.
 
 ## Probe & Level detection
 
@@ -34,7 +64,7 @@ The wrappers do **not** home first, call `SAVE_CONFIG`, restart Klipper, or cont
 
 ## Install
 
-From the local `COREXY` repository, run a read-only dry run first.
+From the local `COREXY` repository, run a read-only dry run first if desired.
 
 Windows PowerShell:
 
@@ -63,7 +93,7 @@ The installer:
 - backs up the current mobile layout, existing managed macro group, main printer config and `.theme/custom.css`;
 - writes `mainsail-mobile.cfg`;
 - adds one marked `[include mainsail-mobile.cfg]` block to the main Klipper config;
-- preserves any unrelated existing custom CSS and adds a phone-only touch-target block;
+- preserves any unrelated existing custom CSS and adds the managed pendant CSS block;
 - creates/updates the dedicated `Probe & Level` Mainsail macro group;
 - replaces only `dashboard.mobileLayout`.
 
@@ -71,11 +101,13 @@ It does **not** call any Moonraker printer-control endpoint.
 
 ## Activate
 
-After installation, inspect the generated `mainsail-mobile.cfg` and the managed include from desktop Mainsail.
+After first installation, inspect the generated `mainsail-mobile.cfg` and the managed include from desktop Mainsail.
 
-When you are ready, run `FIRMWARE_RESTART` yourself so Klipper loads the new wrapper macros. The installer intentionally does not restart the printer.
+When you are ready, run `FIRMWARE_RESTART` yourself so Klipper loads newly-created wrapper macros. The installer intentionally does not restart the printer.
 
 Refresh Mainsail on the phone after the restart. A hard refresh may be needed for the custom CSS.
+
+For later CSS-only visual changes, use `apply_theme.py`; those do not require a Klipper restart.
 
 ## Files managed on the printer
 
@@ -84,11 +116,11 @@ printer_data/config/
 ├── <main printer config>       # one marked include block
 ├── mainsail-mobile.cfg         # generated wrapper macros
 └── .theme/
-    └── custom.css              # one marked mobile CSS block
+    └── custom.css              # one marked COREXY CSS block
 ```
 
-All edits use `BEGIN/END COREXY MOBILE PENDANT` markers so rerunning the installer updates its own block instead of duplicating it.
+All edits use `BEGIN/END COREXY MOBILE PENDANT` markers so rerunning the tooling updates its own block instead of duplicating it.
 
 ## Safety boundary
 
-This repository code configures the UI only. Installation performs no G-code execution, no movement, no homing, no probing, no levelling, no heating, and no printer restart.
+This repository code configures the UI only. Installation and theme application perform no G-code execution, no movement, no homing, no probing, no levelling, no heating, and no printer restart.
