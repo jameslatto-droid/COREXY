@@ -207,6 +207,13 @@ def replace_managed_block(text: str, begin: str, end: str, block: str) -> str:
         if after:
             result += "\n\n" + after
         return result.rstrip() + "\n"
+    save_config_marker = "#*# <---------------------- SAVE_CONFIG ---------------------->"
+    marker_start = text.find(save_config_marker)
+    if marker_start != -1:
+        before = text[:marker_start].rstrip()
+        after = text[marker_start:].lstrip()
+        result = (before + "\n\n" if before else "") + block.strip()
+        return result + "\n\n" + after.rstrip() + "\n"
     base = text.rstrip()
     return (base + "\n\n" if base else "") + block.strip() + "\n"
 
