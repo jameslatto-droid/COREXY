@@ -1,0 +1,32 @@
+/* BEGIN COREXY MOBILE PENDANT */
+@media (max-width: 767.98px) {
+  .toolhead-control-panel .v-btn,
+  .extruder-control-panel .v-btn,
+  .temperature-panel .v-btn,
+  .macrogroup_6fefb78c-4cf4-4e77-9b37-17d2cd58a2fb_panel .v-btn {
+    min-width: 48px;
+    min-height: 48px;
+    font-size: 1rem;
+  }
+
+  .toolhead-control-panel input,
+  .extruder-control-panel input,
+  .temperature-panel input {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  .toolhead-control-panel .v-input,
+  .extruder-control-panel .v-input,
+  .temperature-panel .v-input {
+    font-size: 16px;
+  }
+
+  .toolhead-control-panel .v-card__text,
+  .extruder-control-panel .v-card__text,
+  .temperature-panel .v-card__text {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+/* END COREXY MOBILE PENDANT */
