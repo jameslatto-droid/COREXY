@@ -1,0 +1,357 @@
+# Mainsail Settings
+[include mainsail.cfg]
+# Timelapse
+[include timelapse.cfg]
+# LED Strip Settings
+#[include ledcontrol.cfg]
+# Macros
+[include macro.cfg]
+# Neopixel Settings
+#[include neopixel.cfg]
+[include neopixel1.cfg]
+# Menu Settings
+[include menu.cfg]
+
+[neopixel top_lights]
+pin: PD5
+chain_count: 60
+
+[mcu]
+serial: /dev/serial/by-id/usb-Klipper_stm32f407xx_4E0032001750563641353820-if00
+
+[mcu rpi]
+serial: /tmp/klipper_host_mcu
+
+
+[input_shaper]
+shaper_freq_x: 83.2
+shaper_type_x: ei
+shaper_freq_y: 51.8
+shaper_type_y: mzv
+
+[printer]
+kinematics: corexy
+max_velocity: 300
+max_accel: 3000
+max_z_velocity: 15
+max_z_accel: 350
+#max_accel_to_decel: 2500
+#minimum_cruise_ratio: 0.5  # Default: 0.5 (50% cruise)
+[firmware_retraction]
+retract_length: 0.6
+retract_speed: 40
+unretract_extra_length: 0
+unretract_speed: 30
+
+#   The speed of unretraction, in mm/s. The default is 10 mm/s.
+
+[board_pins]
+aliases:
+    EXP1_1=PG4, EXP1_3=PD11, EXP1_5=PG2, EXP1_7=PG6, EXP1_9=<GND>,
+    EXP1_2=PA8, EXP1_4=PD10, EXP1_6=PG3, EXP1_8=PG7, EXP1_10=<5V>,
+    EXP2_1=PB14, EXP2_3=PG10, EXP2_5=PF11, EXP2_7=PF12,  EXP2_9=<GND>,
+    EXP2_2=PB13, EXP2_4=PB12, EXP2_6=PB15, EXP2_8=<RST>, EXP2_10=PF13
+
+
+#####################################################################
+# X/Y Stepper Settings
+#####################################################################
+
+[stepper_x]
+step_pin: PE9
+dir_pin: !PF1
+enable_pin: !PF2
+endstop_pin: PE15
+microsteps: 32
+#interpolate: False
+rotation_distance: 40
+full_steps_per_rotation: 200
+position_min: 0
+position_endstop: 300
+position_max: 300
+homing_speed: 25
+homing_retract_dist: 5
+homing_positive_dir: true
+
+[tmc2209 stepper_x]
+uart_pin: PC13
+run_current: 1.1
+#hold_current: 0.500
+stealthchop_threshold: 0
+
+[stepper_y]
+step_pin: PE11
+dir_pin: !PE8
+enable_pin: !PD7
+endstop_pin: PE10
+microsteps: 32
+#interpolate: False
+rotation_distance: 40
+full_steps_per_rotation: 200
+position_min:0
+position_endstop: 300
+position_max: 300
+homing_speed: 25
+homing_retract_dist: 5
+homing_positive_dir: true
+
+[tmc2209 stepper_y]
+uart_pin: PE3
+run_current: 1.1
+#hold_current: 0.500
+stealthchop_threshold: 0
+
+#####################################################################
+# Z Stepper Settings
+#####################################################################
+
+[stepper_z]
+step_pin: PE13
+dir_pin: PE7
+enable_pin: !PA3
+microsteps: 32
+#interpolate: False
+rotation_distance: 4
+full_steps_per_rotation: 200
+gear_ratio: 3:1
+position_endstop: 0
+position_max: 400
+homing_speed: 5
+position_min: -2
+#endstop_pin: probe:z_virtual_endstop
+endstop_pin: PG8
+
+[tmc2209 stepper_z]
+uart_pin: PD1
+run_current: 1.1
+#hold_current: 0.500
+stealthchop_threshold: 1000
+
+[stepper_z1]
+step_pin: PD15
+dir_pin: PC2
+enable_pin: !PC0
+microsteps: 32
+#interpolate: False
+rotation_distance: 4
+full_steps_per_rotation: 200
+gear_ratio: 3:1
+#endstop_pin: probe:z_virtual_endstop
+endstop_pin: PG5
+
+[tmc2209 stepper_z1]
+uart_pin: PE1
+run_current: 1.1
+#hold_current: 0.500
+stealthchop_threshold: 1000
+
+
+#####################################################################
+# Extruder
+#####################################################################
+
+[extruder]
+step_pin: PE14
+dir_pin: !PA0
+enable_pin: !PC3
+
+rotation_distance: 26.76116	#Bondtech 5mm Bore Drive Gears
+gear_ratio: 50:17				#BMG Gear Ratio
+microsteps: 16
+full_steps_per_rotation: 200	#200 for 1.8 degree, 400 for 0.9 degree
+
+
+nozzle_diameter: 0.4
+filament_diameter: 1.750
+
+max_extrude_only_distance: 200
+max_extrude_only_velocity: 60
+max_extrude_only_accel: 2000
+
+pressure_advance: 0.06
+pressure_advance_smooth_time: 0.040
+
+
+heater_pin: PB1 # Heater0
+sensor_type: ATC Semitec 104GT-2
+sensor_pin: PF4 # T0
+#control: pid
+min_extrude_temp: 160
+min_temp: 0
+max_temp: 280
+
+#pid_Kp=17.284
+#pid_Ki=0.720
+#pid_Kd=103.704
+
+
+#####################################################################
+# Bed Heater
+#####################################################################
+
+[heater_bed]
+heater_pin: PD12
+sensor_type: ATC Semitec 104GT-2
+sensor_pin: PF3 # T3
+#control: pid
+min_temp: -50
+max_temp: 110
+
+#pid_Kp=72.205
+#pid_Ki=1.352
+#pid_Kd=963.934
+
+#####################################################################
+# Fans
+#####################################################################
+
+[fan]
+pin: PC8
+
+[heater_fan extruder_fan]
+pin: PE5
+heater_temp: 50
+
+[controller_fan stepper_fan]
+pin: PE6
+max_power: 0.6
+shutdown_speed: 0
+cycle_time: 0.010
+hardware_pwm: False
+kick_start_time: 0.100
+idle_timeout: 30
+idle_speed: 0.6
+heater: extruder, heater_bed
+
+#####################################################################
+# Probe & Mesh
+#####################################################################
+
+[safe_z_home]
+home_xy_position: 150,150
+speed: 100
+z_hop: 5
+z_hop_speed: 4
+
+[bltouch]
+sensor_pin: ^PA2
+control_pin: PA1
+#in_up_reports_not_triggered: true
+#in_up_touch_mode_reports_triggered: false
+stow_on_each_sample: true
+samples: 2
+speed: 10
+pin_move_time: 0.675
+sample_retract_dist: 10
+samples_tolerance: 0.25
+samples_tolerance_retries: 3
+#z_offset: 0.26
+y_offset: -20
+x_offset: -27
+
+
+[bed_mesh]
+#speed: 100
+horizontal_move_z: 20
+mesh_min: 35,35
+mesh_max: 270,270
+probe_count: 5,5
+fade_start: 1.0
+fade_end: 10.0
+mesh_pps: 2,2
+algorithm: bicubic
+bicubic_tension: .2
+
+
+[bed_screws]
+
+screw1: 30,30
+screw2: 270,30
+screw3: 270,270
+screw4: 30,270
+
+[screws_tilt_adjust]
+screw1: 57,50
+screw1_name: front left screw
+screw2: 297,50
+screw2_name: front right screw
+screw3: 297,290
+screw3_name: rear right screw
+screw4: 57,290
+screw4_name: rear left screw
+horizontal_move_z: 10
+speed: 100
+screw_thread: CW-M3
+
+#####################################################################
+# Misc
+#####################################################################
+
+[force_move]
+enable_force_move: True
+
+[pause_resume]
+
+[idle_timeout]
+gcode:
+    M84
+    STOP_PRINT
+    READY
+
+[virtual_sdcard]
+path:  /home/pi/printer_data/gcodes
+
+[display_status]
+
+[respond]
+
+[temperature_sensor raspberry_pi]
+sensor_type: temperature_host
+min_temp: 10
+max_temp: 100
+
+[temperature_sensor mcu_temp]
+sensor_type: temperature_mcu
+min_temp: 0
+max_temp: 100
+
+# z_offset = 2.1 #1.98 1.78
+
+#*# <---------------------- SAVE_CONFIG ---------------------->
+#*# DO NOT EDIT THIS BLOCK OR BELOW. The contents are auto-generated.
+#*#
+#*# [bltouch]
+#*# z_offset = 1.720
+#*#
+#*# [bed_mesh default]
+#*# version = 1
+#*# points =
+#*# 	-0.022500, -0.042917, 0.001875, 0.038750, 0.024167
+#*# 	-0.038750, -0.048958, -0.017083, 0.006667, 0.014167
+#*# 	-0.034792, -0.036875, -0.004792, -0.015000, -0.020625
+#*# 	-0.001875, -0.020833, 0.001250, 0.019583, 0.024583
+#*# 	0.026042, 0.007500, 0.041042, 0.068125, 0.085000
+#*# tension = 0.2
+#*# min_x = 35.0
+#*# algo = bicubic
+#*# y_count = 5
+#*# mesh_y_pps = 2
+#*# min_y = 35.0
+#*# x_count = 5
+#*# max_y = 270.0
+#*# mesh_x_pps = 2
+#*# max_x = 270.0
+#*#
+#*# [extruder]
+#*# control = pid
+#*# pid_kp = 24.253
+#*# pid_ki = 1.406
+#*# pid_kd = 104.592
+#*#
+#*# [heater_bed]
+#*# control = pid
+#*# pid_kp = 73.106
+#*# pid_ki = 1.464
+#*# pid_kd = 912.907
+#*#
+#*# [input_shaper]
