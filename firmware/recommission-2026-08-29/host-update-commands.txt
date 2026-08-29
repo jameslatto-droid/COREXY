@@ -1,0 +1,37 @@
+# Stage 13D host update commands — REVIEW ONLY; DO NOT RUN DURING PREP
+# These commands intentionally perform no G-code or motion tests.
+
+set -eu
+
+# Inspect first. Abort rather than overwrite tracked live changes.
+cd ~/klipper
+git status --short --branch
+git diff --quiet
+git diff --cached --quiet
+git fetch --prune origin master
+git merge --ff-only ac2a7f8b0e1ba61afe51e7e25583772d6e65e1fa
+
+# Pin the led_effect checkout to Moonraker's offered latest target.
+cd ~/klipper-led_effect
+git status --short --branch
+git fetch --prune origin master
+git checkout --detach 266f1049c7172c2fba0da4a52314dcfc0c3bb56f
+./install-led_effect.sh -k ~/klipper -c ~/printer_data/config
+
+# Rebuild the host MCU on the Pi's native toolchain. Do not copy the
+# cross-built bundle ELF over a live installation without local verification.
+cd ~/klipper
+cp .config .config.before-stage13d-2026-08-29
+make olddefconfig
+make -j2
+
+# Restart only after the board image was accepted and the host build succeeded.
+sudo systemctl restart klipper
+sudo systemctl is-active --quiet klipper
+
+# Version and connection checks only; do not issue G-code.
+git -C ~/klipper describe --always --tags
+git -C ~/klipper-led_effect describe --always --tags
+grep -E "Loaded MCU|Configured MCU|MCU 'mcu' config" \
+    ~/printer_data/logs/klippy.log | tail -20
+curl -sS http://127.0.0.1:7125/server/info
