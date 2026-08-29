@@ -1,5 +1,7 @@
 # Stage 13D host update commands — REVIEW ONLY; DO NOT RUN DURING PREP
 # These commands intentionally perform no G-code or motion tests.
+# The corrected bundle host artifact is ELF32 ARM EABI5 hard-float
+# (SHA256 d3838502682edaf6fa3aa3923b84e10aad22544320b7c727c7f7373f1a21bbcb).
 
 set -eu
 
@@ -18,8 +20,9 @@ git fetch --prune origin master
 git checkout --detach 266f1049c7172c2fba0da4a52314dcfc0c3bb56f
 ./install-led_effect.sh -k ~/klipper -c ~/printer_data/config
 
-# Rebuild the host MCU on the Pi's native toolchain. Do not copy the
-# cross-built bundle ELF over a live installation without local verification.
+# Rebuild the host MCU on the Pi's native 32-bit ARM toolchain. Do not copy
+# the bundle ELF over a live installation without local verification; the
+# native build remains authoritative if the target environment differs.
 cd ~/klipper
 cp .config .config.before-stage13d-2026-08-29
 make olddefconfig

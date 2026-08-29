@@ -45,17 +45,22 @@ compiled capability, not an indication that this printer used CAN.
 - `stm32.config`: normalized exact build configuration derived from live
   `/home/pi/klipper/.config.old`.
 - `generic-bigtreetech-skr-pro.cfg`: pinned upstream board reference.
-- `klipper_host_mcu.elf`: ARM64 Linux host-MCU ELF, built from the live host
-  configuration. It matches the Pi architecture and is recorded for
-  verification; do not install it blindly. Rebuild on the Pi after the host
-  source update if the host toolchain or filesystem differs.
+- `klipper_host_mcu.elf`: 32-bit ARM Linux host-MCU ELF (ELF32, ARM,
+  EABI5, hard-float ABI; ARMv7-A/Thumb-2), built from the host configuration
+  with the isolated `arm-linux-gnueabihf` toolchain. SHA256:
+  `d3838502682edaf6fa3aa3923b84e10aad22544320b7c727c7f7373f1a21bbcb`.
+  The prior live inspection identified `/usr/local/bin/klipper_mcu` as
+  32-bit ARM EABI5; this replaces the incorrect ARM64 bundle artifact.
+  Verify locally before installation and prefer rebuilding on the Pi after
+  the host source update if the host toolchain or filesystem differs.
 - `host-mcu.config`: normalized exact Linux host-MCU build configuration
   derived from live `/home/pi/klipper/.config`.
 - `SHA256SUMS.txt`: hashes for every bundle artifact.
 
 The host MCU uses `/tmp/klipper_host_mcu` at runtime and is not a USB/CAN
-device. The bundle build used `CONFIG_CLOCK_FREQ=50000000` and Linux host
-MCU settings from the live configuration.
+device. The bundle build used `CONFIG_CLOCK_FREQ=50000000`, Linux host MCU
+settings from the live configuration, and the pinned Klipper source commit
+with GCC 13.3.0 (`arm-linux-gnueabihf`, binutils 2.42) in isolated WSL.
 
 ## Safe physical sequence (no motion tests)
 
